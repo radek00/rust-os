@@ -1,7 +1,7 @@
 use core::fmt;
 use lazy_static::lazy_static;
-use volatile::Volatile;
 use spin::Mutex;
+use volatile::Volatile;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -35,8 +35,6 @@ impl ColorCode {
     }
 }
 
-
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
 struct ScreenChar {
@@ -56,7 +54,6 @@ pub struct Writer {
     color_code: ColorCode,
     buffer: &'static mut Buffer,
 }
-
 
 impl Writer {
     pub fn write_byte(&mut self, byte: u8) {
@@ -88,7 +85,6 @@ impl Writer {
                 // not part of printable ASCII range
                 _ => self.write_byte(0xfe),
             }
-
         }
     }
 
@@ -119,7 +115,6 @@ impl fmt::Write for Writer {
         Ok(())
     }
 }
-
 
 // pub fn print_something() {
 //     let mut writer = Writer {
