@@ -13,6 +13,10 @@ pub extern "C" fn _start() -> ! {
 
     rust_os::init(); // new
 
+    unsafe {
+        *(0xdeadbeef as *mut u8) = 42;
+    };
+
     // invoke a breakpoint exception
     x86_64::instructions::interrupts::int3();
 
