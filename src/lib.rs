@@ -9,6 +9,7 @@ use core::panic::PanicInfo;
 
 pub mod serial;
 pub mod vga_buffer;
+pub mod gdt;
 mod interrupts;
 
 pub trait Testable {
