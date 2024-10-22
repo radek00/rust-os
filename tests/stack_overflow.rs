@@ -1,12 +1,11 @@
-
 #![feature(abi_x86_interrupt)]
 #![no_std]
 #![no_main]
 use core::panic::PanicInfo;
-use rust_os::serial_print;
 use lazy_static::lazy_static;
+use rust_os::serial_print;
+use rust_os::{exit_qemu, serial_println, QemuExitCode};
 use x86_64::structures::idt::InterruptDescriptorTable;
-use rust_os::{exit_qemu, QemuExitCode, serial_println};
 use x86_64::structures::idt::InterruptStackFrame;
 
 #[no_mangle]
@@ -27,14 +26,11 @@ fn panic(info: &PanicInfo) -> ! {
     rust_os::test_panic_handler(info)
 }
 
-
 #[allow(unconditional_recursion)]
 fn stack_overflow() {
     stack_overflow(); // for each recursion, the return address is pushed
     volatile::Volatile::new(0).read(); // prevent tail recursion optimizations
 }
-
-
 
 lazy_static! {
     static ref TEST_IDT: InterruptDescriptorTable = {
@@ -52,7 +48,6 @@ lazy_static! {
 pub fn init_test_idt() {
     TEST_IDT.load();
 }
-
 
 extern "x86-interrupt" fn test_double_fault_handler(
     _stack_frame: InterruptStackFrame,
