@@ -2,7 +2,6 @@ use core::fmt;
 use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
-use x86_64::instructions::interrupts;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -166,6 +165,8 @@ fn test_println_simple() {
 
 #[test_case]
 fn test_println_many() {
+    use x86_64::instructions::interrupts;
+
     for _ in 0..200 {
         interrupts::without_interrupts(|| {
             println!("test_println_many output");
