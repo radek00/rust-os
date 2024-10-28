@@ -17,6 +17,14 @@ pub extern "C" fn _start() -> ! {
     //     *(0xdeadbeef as *mut u8) = 42;
     // };
 
+    let ptr = 0x2031b2 as *mut u8;
+
+    // read from a code page
+    unsafe {
+        let x = *ptr;
+    }
+    println!("read worked");
+
     // invoke a breakpoint exception
     x86_64::instructions::interrupts::int3();
 
