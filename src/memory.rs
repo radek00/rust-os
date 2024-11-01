@@ -1,4 +1,7 @@
-use x86_64::{structures::paging::PageTable, PhysAddr, VirtAddr};
+use x86_64::{
+    structures::paging::{OffsetPageTable, PageTable},
+    PhysAddr, VirtAddr,
+};
 
 /// Returns a mutable reference to the active level 4 table.
 ///
@@ -61,4 +64,9 @@ fn translate_addr_inner(addr: VirtAddr, physical_memory_offset: VirtAddr) -> Opt
 
     // calculate the physical address by adding the page offset
     Some(frame.start_address() + u64::from(addr.page_offset()))
+}
+
+pub unsafe fn init(physical_memory_offset: VirtAddr) -> OffsetPageTable<'static> {
+    let level_4_table = active_level_4_table(physical_memory_offset);
+    OffsetPageTable::new(level_4_table, physical_memory_offset)
 }
