@@ -11,7 +11,10 @@ use rust_os::{
     memory::{self},
     println,
 };
-use x86_64::{structures::paging::Translate, VirtAddr};
+use x86_64::{
+    structures::paging::{frame, Page, Translate},
+    VirtAddr,
+};
 
 entry_point!(kernel_main);
 
@@ -28,7 +31,13 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     //         println!("L4 Entry {}: {:?}", i, entry);
     //     }
     // }
-    let mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut frame_allocator = memory::EmptyFrameAllocator;
+    let page = Page::containing_address(VirtAddr::new(0));
+    memory::create_example_mapping(page, &mut mapper, &mut frame_allocator);
+
+    let page_ptr: *mut u64 = page.start_address().as_mut_ptr();
+    unsafe { page_ptr.offset(400).write_volatile(0x_f021_f077_f065_f04e) };
 
     let addresses = [
         // the identity-mapped vga buffer page
