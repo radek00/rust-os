@@ -3,6 +3,8 @@ use core::{
     ptr,
 };
 
+use super::{align_up, Locked};
+
 pub struct BumpAllocator {
     heap_start: usize,
     heap_end: usize,
@@ -59,24 +61,4 @@ unsafe impl GlobalAlloc for Locked<BumpAllocator> {
             bump.next = bump.heap_start;
         }
     }
-}
-
-pub struct Locked<A> {
-    inner: spin::Mutex<A>,
-}
-
-impl<A> Locked<A> {
-    pub const fn new(inner: A) -> Self {
-        Locked {
-            inner: spin::Mutex::new(inner),
-        }
-    }
-
-    pub fn lock(&self) -> spin::MutexGuard<A> {
-        self.inner.lock()
-    }
-}
-
-fn align_up(addr: usize, align: usize) -> usize {
-    (addr + align - 1) & !(align - 1)
 }
