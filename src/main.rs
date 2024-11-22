@@ -11,7 +11,7 @@ use core::panic::PanicInfo;
 use rust_os::{
     allocator, hlt_loop,
     memory::{self, BootInfoFrameAllocator},
-    println,
+    println, task::{simple_executor::SimpleExecutor, Task},
 };
 use x86_64::{
     structures::paging::{frame, Page, Translate},
@@ -42,6 +42,10 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     // unsafe { page_ptr.offset(400).write_volatile(0x_f021_f077_f065_f04e) };
 
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+
+    let mut executor = SimpleExecutor::new();
+    executor.spawn(Task::new(example_task()));
+    executor.run();
 
     let heap_value = Box::new(41);
     println!("heap_value at {:p}", heap_value);
