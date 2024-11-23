@@ -11,7 +11,8 @@ use core::panic::PanicInfo;
 use rust_os::{
     allocator, hlt_loop,
     memory::{self, BootInfoFrameAllocator},
-    println, task::{simple_executor::SimpleExecutor, Task},
+    println,
+    task::{keyboard, simple_executor::SimpleExecutor, Task},
 };
 use x86_64::{
     structures::paging::{frame, Page, Translate},
@@ -45,6 +46,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     let mut executor = SimpleExecutor::new();
     executor.spawn(Task::new(example_task()));
+    executor.spawn(Task::new(keyboard::print_keypresses())); // new
     executor.run();
 
     let heap_value = Box::new(41);
