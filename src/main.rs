@@ -12,12 +12,9 @@ use rust_os::{
     allocator, hlt_loop,
     memory::{self, BootInfoFrameAllocator},
     println,
-    task::{keyboard, simple_executor::SimpleExecutor, Task},
+    task::{executor::Executor, keyboard, Task},
 };
-use x86_64::{
-    structures::paging::{frame, Page, Translate},
-    VirtAddr,
-};
+use x86_64::{structures::paging::Translate, VirtAddr};
 
 entry_point!(kernel_main);
 
@@ -44,9 +41,9 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
-    let mut executor = SimpleExecutor::new();
+    let mut executor = Executor::new(); // new
     executor.spawn(Task::new(example_task()));
-    executor.spawn(Task::new(keyboard::print_keypresses())); // new
+    executor.spawn(Task::new(keyboard::print_keypresses()));
     executor.run();
 
     let heap_value = Box::new(41);
